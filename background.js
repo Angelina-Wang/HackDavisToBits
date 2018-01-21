@@ -1,5 +1,8 @@
 var old_url = "";
 var banned_websites = ['facebook.com', 'twitter.com', 'instagram.com'];
+var encouraging_messages = ['Now get back to work.', 'Your GPA is dropping as you read this.',
+'What would your loved ones say.', 'Tally ho now.', 'Pip pip and away from this page you go.',
+'Why are you like this.'];
 
 chrome.tabs.onActivated.addListener(function() {
   check_current_url();
@@ -32,6 +35,12 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         }
       });
 
+function random_message(message_list) {
+  var num = message_list.length;
+  var index = Math.floor(Math.random() * num);
+  return message_list[index];
+}
+
 function check_current_url() {
   chrome.storage.sync.get(['toggle', 'quantity', 'charity', 'banned'], (items) => {
     var toggle = items['toggle']
@@ -52,7 +61,7 @@ function check_current_url() {
         if (check_name(url) && check_name(old_url) != check_name(url)) {
           var quantity = items['quantity'];
           var charity = items['charity'];
-          var message = 'You just donated ' + quantity + ' cents to ' + charity + '. Now get back to work.';
+          var message = 'You just donated ' + quantity + ' cents to ' + charity + '. ' + random_message(encouraging_messages);
           if (!quantity && !charity) {
             message = 'Please set a desired donation amount and charity by clicking on the extension.'
           }

@@ -17,6 +17,14 @@
         font-size: 15px;
       }
 
+      #header1, #container1 {
+        display: inline-block;
+      }
+
+      #container1 {
+        margin-left: 140px;
+      }
+
       #container {
         align-items: center;
         display: flex;
@@ -84,6 +92,41 @@
       .slider.round:before {
         border-radius: 50%;
       }
+
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+          }
+
+      /* Tooltip text */
+      .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 120px;
+          /*display: inline-block;*/
+          /*display: block;*/
+          word-wrap: break-word;
+          /*background-color: black;
+          color: #fff;
+          height:500px;
+          text-align: center;
+          padding: 5px 0;
+          border-radius: 6px;*/
+       
+          /* Position the tooltip text - see examples below! */
+          position: absolute;
+          z-index: 1;
+          display:table; /* Enable line-wrapping in IE8+ */
+          white-space:normal;
+          right: 105%;
+          top: -5px;
+      }
+
+      /* Show the tooltip text when you mouse over the tooltip container */
+      .tooltip:hover .tooltiptext {
+          visibility: visible;
+          /*display: block;*/
+      }
     </style>
 
     <!--
@@ -96,7 +139,15 @@
   </head>
 
   <body>
-    <h1>Work Hard Pay Hard</h1>
+    <div id='header1'>
+      <h1>Work Hard Pay Hard</h1>
+    </div>
+    <div id="container1">
+      <div class="tooltip">Help
+        <span class="tooltiptext">Configure settings and slide toggle to start and end session.</span>
+      </div>
+    </div>
+    </div>
     <div id="container">
       <label class="switch">
         <input type="checkbox" id='toggle'>
@@ -107,10 +158,10 @@
       <span>Choose payment amount</span>
       <select id="quantity">
         <option selected disabled hidden value=''></option>
-        <option value=2>2 cents</option>
-        <option value=5>5 cents</option>
-        <option value=25>25 cents</option>
-        <option value=100>1 dollar</option>
+        <option value=2>$0.02</option>
+        <option value=5>$0.05</option>
+        <option value=25>$0.25</option>
+        <option value=100>$1.00</option>
       </select>
     </div>
     <div id="container">
@@ -124,7 +175,7 @@
     </div>
     <div id="container">
       <form action="">
-        <label for="website">Enter website name: </label>
+        <label for="website">Enter website to avoid: </label>
         <input type="text" id="website" name="website" placeholder="e.g. facebook.com">
         <input type="submit" value="Submit" id="submit_website">
       </form>
