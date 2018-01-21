@@ -24,6 +24,7 @@
 // });
 
 var old_url = "";
+const banned_websites = ['facebook', 'twitter', 'instagram'];
 var last_time = new Date().getTime();
 
 chrome.tabs.onActivated.addListener(function() {
@@ -74,14 +75,12 @@ function check_current_url() {
 }
 
 function check_name(url) {
-  if (url.includes('facebook')) {
-    return 'facebook';
-  }
-  if (url.includes('twitter')) {
-    return 'twitter';
-  }
-  if (url.includes('instagram')) {
-    return 'instagram';
+  console.log("here");
+  for (web in banned_websites) {
+    console.log(banned_websites[web]);
+    if (url.includes(banned_websites[web])) {
+      return banned_websites[web];
+    }
   }
   return '';
 }

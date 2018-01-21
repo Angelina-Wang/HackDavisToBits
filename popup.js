@@ -152,6 +152,16 @@ document.addEventListener('DOMContentLoaded', () => {
     var dropdown_charity = document.getElementById('charity');
     var toggle = document.getElementById('toggle');
 
+    getSavedToggle(url, (savedToggle) => {
+      if (savedToggle) {
+        var checked = false;
+        if (savedToggle == 'on') {
+          checked = true;
+        }
+        toggle.checked = checked;
+      }
+    });
+
     // Load the saved quantity and modify the dropdown
     // value, if needed.
     getSavedDonationAmount(url, (savedQuantity) => {
@@ -164,16 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
     getSavedCharity(url, (savedCharity) => {
       if (savedCharity) {
         dropdown_charity.value = savedCharity;
-      }
-    });
-
-    getSavedToggle(url, (savedToggle) => {
-      if (savedToggle) {
-        var checked = false;
-        if (savedToggle == 'on') {
-          checked = true;
-        }
-        toggle.checked = checked;
       }
     });
 
