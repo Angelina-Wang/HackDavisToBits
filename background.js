@@ -24,7 +24,7 @@
 // });
 
 var old_url = "";
-const banned_websites = ['facebook', 'twitter', 'instagram'];
+var banned_websites = ['facebook.com', 'twitter.com', 'instagram.com'];
 var last_time = new Date().getTime();
 
 chrome.tabs.onActivated.addListener(function() {
@@ -44,12 +44,15 @@ chrome.windows.onCreated.addListener(function(window) {
 });
 
 function check_current_url() {
-  chrome.storage.sync.get(['toggle', 'quantity', 'charity'], (items) => {
+  chrome.storage.sync.get(['toggle', 'quantity', 'charity', 'banned'], (items) => {
     var toggle = items['toggle']
     if (toggle == 'off') {
       return;
     }
     else {
+      if (!banned_websites.includes(items['banned'])) {
+        banned_websites.push(items['banned']);
+      }
       chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -61,8 +64,14 @@ function check_current_url() {
           var quantity = items['quantity'];
           var charity = items['charity'];
           var message = 'You just donated ' + quantity + ' cents to ' + charity + '. Now get back to work.';
-          if (!quantity) {
+          if (!quantity && !charity) {
+            message = 'Please set a desired donation amount and charity by clicking on the extension.'
+          }
+          else if (!quantity) {
             message = 'Please set a desired donation amount by clicking on the extension.'
+          }
+          else if (!charity) {
+            message = 'Please set a desired charity by clicking on the extension.'
           }
           alert(message)
           donate(quantity);
@@ -75,9 +84,7 @@ function check_current_url() {
 }
 
 function check_name(url) {
-  console.log("here");
   for (web in banned_websites) {
-    console.log(banned_websites[web]);
     if (url.includes(banned_websites[web])) {
       return banned_websites[web];
     }

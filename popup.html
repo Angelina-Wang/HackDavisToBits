@@ -46,8 +46,8 @@
         right: 0;
         bottom: 0;
         background-color: #ccc;
-        -webkit-transition: .4s;
-        transition: .4s;
+        -webkit-transition: .0s;
+        transition: .0s;
       }
 
       .slider:before {
@@ -58,8 +58,8 @@
         left: 4px;
         bottom: 4px;
         background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
+        -webkit-transition: .0s;
+        transition: .0s;
       }
 
       input:checked + .slider {
@@ -97,10 +97,12 @@
 
   <body>
     <h1>Work Hard Pay Hard</h1>
-    <label class="switch">
-      <input type="checkbox" id='toggle'>
-      <span class="slider round"></span>
-    </label>
+    <div id="container">
+      <label class="switch">
+        <input type="checkbox" id='toggle'>
+        <span class="slider round"></span>
+      </label>
+    </div>
     <div id="container">
       <span>Choose payment amount</span>
       <select id="quantity">
@@ -119,6 +121,13 @@
         <option value="Charity 2">Charity 2</option>
         <option value="Charity 3">Charity 3</option>
       </select>
+    </div>
+    <div id="container">
+      <form action="">
+        <label for="website">Enter website name: </label>
+        <input type="text" id="website" name="website" placeholder="e.g. facebook.com">
+        <input type="submit" value="Submit" id="submit">
+      </form>
     </div>
   </body>
 </html>

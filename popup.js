@@ -143,6 +143,15 @@ function saveToggle(value) {
   chrome.storage.sync.set(items);
 }
 
+/**
+  * Saves website to banned list
+  */
+function saveBanned(web) {
+  var items = {};
+  items['banned'] = web; // Value will be 'on' or 'off'
+  chrome.storage.sync.set(items);
+}
+
 // This extension loads the saved quantity if one exists. The user can select a
 // new quantity amount from the dropdown and it will be saved as part of the extension's
 // isolated storage.
@@ -151,16 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
     var dropdown_quantity = document.getElementById('quantity');
     var dropdown_charity = document.getElementById('charity');
     var toggle = document.getElementById('toggle');
-
-    getSavedToggle(url, (savedToggle) => {
-      if (savedToggle) {
-        var checked = false;
-        if (savedToggle == 'on') {
-          checked = true;
-        }
-        toggle.checked = checked;
-      }
-    });
+    var website = document.getElementById('website');
+    var website_submit = document.getElementById('submit');
 
     // Load the saved quantity and modify the dropdown
     // value, if needed.
@@ -177,6 +178,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    getSavedToggle(url, (savedToggle) => {
+      if (savedToggle) {
+        var checked = false;
+        if (savedToggle == 'on') {
+          checked = true;
+        }
+        toggle.checked = checked;
+      }
+    });
+
     // Ensure the quantity is changed and saved when the dropdown
     // selection changes.
     dropdown_quantity.addEventListener('change', () => {
@@ -190,7 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggle.addEventListener('change', () => {
       var result = toggle.checked ? 'on' : 'off';
+      if (result == 'off') {
+        chrome.storage.sync.clear();
+      }
       saveToggle(result);
+    });
+
+    website_submit.addEventListener('click', () => {
+      var web = website.value;
+      saveBanned(web);
     });
   });
 });
