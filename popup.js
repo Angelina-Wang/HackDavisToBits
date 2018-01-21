@@ -47,82 +47,108 @@ function getCurrentTabUrl(callback) {
   // alert(url); // Shows "undefined", because chrome.tabs.query is async.
 }
 
-/**
- * Change the background color of the current page.
- *
- * @param {string} color The new background color.
- */
-function changeDonationAmount(quantity) {
-  // var script = 'document.body.style.backgroundColor="' + color + '";';
-  // See https://developer.chrome.com/extensions/tabs#method-executeScript.
-  // chrome.tabs.executeScript allows us to programmatically inject JavaScript
-  // into a page. Since we omit the optional first argument "tabId", the script
-  // is inserted into the active tab of the current window, which serves as the
-  // default.
-  // chrome.tabs.executeScript({
-  //   code: script
-  // });
-  console.log("Change to: ")
-  console.log(quantity)
-}
+// /**
+//  * Change the background color of the current page.
+//  *
+//  * @param {string} color The new background color.
+//  */
+// function changeDonationAmount(quantity) {
+//   // var script = 'document.body.style.backgroundColor="' + color + '";';
+//   // See https://developer.chrome.com/extensions/tabs#method-executeScript.
+//   // chrome.tabs.executeScript allows us to programmatically inject JavaScript
+//   // into a page. Since we omit the optional first argument "tabId", the script
+//   // is inserted into the active tab of the current window, which serves as the
+//   // default.
+//   // chrome.tabs.executeScript({
+//   //   code: script
+//   // });
+//   console.log("Change to: ")
+//   console.log(quantity)
+// }
 
 /**
- * Gets the saved background color for url.
+ * Gets the saved quantity.
  *
- * @param {string} url URL whose background color is to be retrieved.
- * @param {function(string)} callback called with the saved background color for
- *     the given url on success, or a falsy value if no color is retrieved.
+ * @param {string} url URL currently on.
+ * @param {function(string)} callback called with the saved quantity for
+ *     on success, or a falsy value if no quantity is retrieved.
  */
 function getSavedDonationAmount(url, callback) {
-  // See https://developer.chrome.com/apps/storage#type-StorageArea. We check
-  // for chrome.runtime.lastError to ensure correctness even when the API call
-  // fails.
   chrome.storage.sync.get('quantity', (items) => {
     callback(chrome.runtime.lastError ? null : items['quantity']);
   });
 }
 
 /**
- * Sets the given background color for url.
+ * Sets the donation amount.
  *
- * @param {string} url URL for which background color is to be saved.
- * @param {string} color The background color to be saved.
+ * @param {string} url currently on.
+ * @param {string} quantity The quantity to be donated.
  */
 function saveDonationAmount(url, quantity) {
   var items = {};
   items['quantity'] = quantity;
-  // See https://developer.chrome.com/apps/storage#type-StorageArea. We omit the
-  // optional callback since we don't need to perform any action once the
-  // background color is saved.
   chrome.storage.sync.set(items);
 }
 
-// This extension loads the saved background color for the current tab if one
-// exists. The user can select a new background color from the dropdown for the
-// current page, and it will be saved as part of the extension's isolated
-// storage. The chrome.storage API is used for this purpose. This is different
-// from the window.localStorage API, which is synchronous and stores data bound
-// to a document's origin. Also, using chrome.storage.sync instead of
-// chrome.storage.local allows the extension data to be synced across multiple
-// user devices.
+/**
+ * Gets the saved quantity.
+ *
+ * @param {string} url URL currently on.
+ * @param {function(string)} callback called with the saved quantity for
+ *     on success, or a falsy value if no quantity is retrieved.
+ */
+function getSavedCharity(url, callback) {
+  chrome.storage.sync.get('charity', (items) => {
+    callback(chrome.runtime.lastError ? null : items['charity']);
+  });
+}
+
+/**
+ * Sets the donation amount.
+ *
+ * @param {string} url currently on.
+ * @param {string} quantity The quantity to be donated.
+ */
+function saveCharity(url, charity) {
+  var items = {};
+  items['charity'] = charity;
+  chrome.storage.sync.set(items);
+}
+
+// This extension loads the saved quantity if one exists. The user can select a
+// new quantity amount from the dropdown and it will be saved as part of the extension's
+// isolated storage.
 document.addEventListener('DOMContentLoaded', () => {
   getCurrentTabUrl((url) => {
-    var dropdown = document.getElementById('dropdown');
+    var dropdown_quantity = document.getElementById('quantity');
+    var dropdown_charity = document.getElementById('charity');
 
-    // Load the saved background color for this page and modify the dropdown
+    // Load the saved quantity and modify the dropdown
     // value, if needed.
     getSavedDonationAmount(url, (savedQuantity) => {
       if (savedQuantity) {
-        changeDonationAmount(savedQuantity);
-        dropdown.value = savedQuantity;
+        //changeDonationAmount(savedQuantity);
+        dropdown_quantity.value = savedQuantity;
       }
     });
 
-    // Ensure the background color is changed and saved when the dropdown
+    getSavedCharity(url, (savedCharity) => {
+      if (savedCharity) {
+        //changeCharity(savedCharity);
+        dropdown_charity.value = savedCharity;
+      }
+    });
+
+    // Ensure the quantity is changed and saved when the dropdown
     // selection changes.
-    dropdown.addEventListener('change', () => {
-      changeDonationAmount(dropdown.value);
-      saveDonationAmount(url, dropdown.value);
+    dropdown_quantity.addEventListener('change', () => {
+      //changeDonationAmount(dropdown.value);
+      saveDonationAmount(url, dropdown_quantity.value);
+    });
+
+    dropdown_charity.addEventListener('change', () => {
+      saveCharity(url, dropdown_charity.value);
     });
   });
 });
