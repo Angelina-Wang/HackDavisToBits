@@ -1,8 +1,23 @@
 var old_url = "";
-var banned_websites = ['facebook.com', 'twitter.com', 'instagram.com'];
+var banned_websites = [];
 var encouraging_messages = ['Now get back to work.', 'Your GPA is dropping as you read this.',
 'What would your loved ones say.', 'Tally ho now.', 'Pip pip and away from this page you go.',
 'Why are you like this.'];
+var descriptions = {"The Honeybee Conservancy": "The Honeybee Conservancy is\
+ a 501c3 non-profit organization that works to help the bees,\
+ while increasing access to organic, sustainable food in under-served\
+    communities.",
+
+"Girls Who Code":"Girls Who Code was founded with\
+a single mission: to close the gender gap in technology. \
+They do so by building supportive communities and providing\
+ opportunities to women in tech",
+
+ "Make A Wish": "The Make-A-Wish Foundation is a 501\
+ non-profit organization founded in the United States \
+ that arranges experiences described as wishes \
+ to children with life-threatening medical conditions."
+ };
 
 chrome.tabs.onActivated.addListener(function() {
   check_current_url();
@@ -26,7 +41,12 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
           if (key == 'toggle' && storageChange.newValue == 'off') {
             chrome.storage.sync.get(['donation_amount', 'charity'], (items) => {
               if (items['donation_amount']) {
-                var message = 'You owe ' + items['charity'] + ' ' + items['donation_amount'] + ' cents. Happy studying.';
+                var message = 'You owe ' + items['charity'] + ' ' + items['donation_amount'] + ' cents. Goodbye now.\n\n' + descriptions[items["charity"]];
+                alert(message);
+                chrome.storage.sync.clear();
+              }
+              else {
+                var message = 'Goodbye now.';
                 alert(message);
                 chrome.storage.sync.clear();
               }
@@ -98,7 +118,5 @@ function donate(quantity) {
     amount = amount + Number(items['quantity']);
     items['donation_amount'] = amount;
     chrome.storage.sync.set(items);
-    console.log(amount);
   });
-  // Fill in donation payment
 }
