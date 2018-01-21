@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener(function() {
     // With a new rule ...
     chrome.declarativeContent.onPageChanged.addRules([
       {
-        
+
         // That fires when a page's URL contains a 'g' ...
         conditions: [
           new chrome.declarativeContent.PageStateMatcher({
@@ -32,6 +32,14 @@ chrome.tabs.onActivated.addListener(function() {
 
 chrome.tabs.onUpdated.addListener(function() {
   check_current_url();
+});
+
+chrome.windows.onFocusChanged.addListener(function(window) {
+    check_current_url();
+});
+
+chrome.windows.onCreated.addListener(function(window) {
+    check_current_url();
 });
 
 function check_current_url() {
