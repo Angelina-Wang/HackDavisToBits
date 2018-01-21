@@ -3,7 +3,7 @@ var banned_websites = [];
 var encouraging_messages = ['Now get back to work.', 'Your GPA is dropping as you read this. Even if you don\'t have one anymore.',
 'What would your loved ones say.', 'Tally ho now.', 'Pip pip and away from this page you go.',
 'Why don\'t you try being better?', 'Slow and steady wins the race. You are neither currently so get back to work.',
-'Shouldn\'t you be working right now'];
+'Shouldn\'t you be working right now.'];
 var descriptions = {"The Honeybee Conservancy": "The Honeybee Conservancy is\
  a 501c3 non-profit organization that works to help the bees,\
  while increasing access to organic, sustainable food in under-served\
@@ -42,7 +42,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
           if (key == 'toggle' && storageChange.newValue == 'off') {
             chrome.storage.sync.get(['donation_amount', 'charity'], (items) => {
               if (items['donation_amount']) {
-                var amount = items['donation_amount'] / 100.0;
+                var amount = parseFloat(items['donation_amount'] / 100.0).toFixed(2);
                 var message = 'You owe ' + items['charity'] + ' $' + amount + ', goodbye now.\n\n' + descriptions[items["charity"]];
                 alert(message);
                 chrome.storage.sync.clear();
