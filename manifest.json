@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Work Hard Pay Hard",
-  "description": "Extension thing",
+  "description": "Fight off procrastination with a small donation! This is a chrome extension that alerts you when you visit a site you have deemed a vice and charges you a specified amount to donate to a charity of your choice upon the completion of a session.",
   "version": "1.0",
   "background": {
     "scripts": ["background.js"],
