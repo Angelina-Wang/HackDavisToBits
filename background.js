@@ -24,7 +24,7 @@
 // });
 
 var old_url = "";
-
+var last_time = new Date().getTime();
 
 chrome.tabs.onActivated.addListener(function() {
   check_current_url();
@@ -43,26 +43,34 @@ chrome.windows.onCreated.addListener(function(window) {
 });
 
 function check_current_url() {
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, function(tabs) {
-    var tab = tabs[0];
-    var url = tab.url;
+  chrome.storage.sync.get(['toggle', 'quantity', 'charity'], (items) => {
+    var toggle = items['toggle']
+    if (toggle == 'off') {
+      return;
+    }
+    else {
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, function(tabs) {
+        var tab = tabs[0];
+        var url = tab.url;
 
-    if (check_name(url) && check_name(old_url) != check_name(url)) {
-      chrome.storage.sync.get('quantity', (items) => {
-        var quantity = items['quantity']
-        var message = 'You just donated ' + quantity + ' cents to WOo charity. Now get back to work.';
-        if (!quantity) {
-          message = 'Please set a desired donation amount by clicking on the extension.'
+        if (check_name(url) && check_name(old_url) != check_name(url)) {
+          var quantity = items['quantity'];
+          var charity = items['charity'];
+          var message = 'You just donated ' + quantity + ' cents to ' + charity + '. Now get back to work.';
+          if (!quantity) {
+            message = 'Please set a desired donation amount by clicking on the extension.'
+          }
+          alert(message)
+          donate(quantity);
         }
-        alert(message)
-        donate(quantity);
+        old_url = url;
       });
     }
-    old_url = url;
   });
+  
 }
 
 function check_name(url) {

@@ -9,6 +9,11 @@
  *   is found.
  */
 function getCurrentTabUrl(callback) {
+  // var items = {};
+  // items['toggle'] = 'off';
+  // items['quantity'] = 2;
+  // items['charity'] = 'Charity 1';
+  // chrome.storage.sync.set(items);
   // Query filter to be passed to chrome.tabs.query - see
   // https://developer.chrome.com/extensions/tabs#method-query
   var queryInfo = {
@@ -95,7 +100,7 @@ function saveDonationAmount(url, quantity) {
  * Gets the saved quantity.
  *
  * @param {string} url URL currently on.
- * @param {function(string)} callback called with the saved quantity for
+ * @param {function(string)} callback called with the saved charity for
  *     on success, or a falsy value if no quantity is retrieved.
  */
 function getSavedCharity(url, callback) {
@@ -105,14 +110,36 @@ function getSavedCharity(url, callback) {
 }
 
 /**
+ * Gets the saved toggle.
+ *
+ * @param {string} url URL currently on.
+ * @param {function(string)} callback called with the saved toggle for
+ *     on success, or a falsy value if no quantity is retrieved.
+ */
+function getSavedToggle(url, callback) {
+  chrome.storage.sync.get('toggle', (items) => {
+    callback(chrome.runtime.lastError ? null : items['toggle']);
+  });
+}
+
+/**
  * Sets the donation amount.
  *
  * @param {string} url currently on.
- * @param {string} quantity The quantity to be donated.
+ * @param {string} quantity The charity to be donated.
  */
 function saveCharity(url, charity) {
   var items = {};
   items['charity'] = charity;
+  chrome.storage.sync.set(items);
+}
+
+/**
+  * Turns app on or off depending on toggle
+  */
+function saveToggle(value) {
+  var items = {};
+  items['toggle'] = value; // Value will be 'on' or 'off'
   chrome.storage.sync.set(items);
 }
 
@@ -123,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
   getCurrentTabUrl((url) => {
     var dropdown_quantity = document.getElementById('quantity');
     var dropdown_charity = document.getElementById('charity');
+    var toggle = document.getElementById('toggle');
 
     // Load the saved quantity and modify the dropdown
     // value, if needed.
@@ -135,8 +163,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     getSavedCharity(url, (savedCharity) => {
       if (savedCharity) {
-        //changeCharity(savedCharity);
         dropdown_charity.value = savedCharity;
+      }
+    });
+
+    getSavedToggle(url, (savedToggle) => {
+      if (savedToggle) {
+        var checked = false;
+        if (savedToggle == 'on') {
+          checked = true;
+        }
+        toggle.checked = checked;
       }
     });
 
@@ -149,6 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dropdown_charity.addEventListener('change', () => {
       saveCharity(url, dropdown_charity.value);
+    });
+
+    toggle.addEventListener('change', () => {
+      var result = toggle.checked ? 'on' : 'off';
+      saveToggle(result);
     });
   });
 });
