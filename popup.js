@@ -52,16 +52,18 @@ function getCurrentTabUrl(callback) {
  *
  * @param {string} color The new background color.
  */
-function changeBackgroundColor(color) {
-  var script = 'document.body.style.backgroundColor="' + color + '";';
+function changeDonationAmount(quantity) {
+  // var script = 'document.body.style.backgroundColor="' + color + '";';
   // See https://developer.chrome.com/extensions/tabs#method-executeScript.
   // chrome.tabs.executeScript allows us to programmatically inject JavaScript
   // into a page. Since we omit the optional first argument "tabId", the script
   // is inserted into the active tab of the current window, which serves as the
   // default.
-  chrome.tabs.executeScript({
-    code: script
-  });
+  // chrome.tabs.executeScript({
+  //   code: script
+  // });
+  console.log("Change to: ")
+  console.log(quantity)
 }
 
 /**
@@ -71,12 +73,12 @@ function changeBackgroundColor(color) {
  * @param {function(string)} callback called with the saved background color for
  *     the given url on success, or a falsy value if no color is retrieved.
  */
-function getSavedBackgroundColor(url, callback) {
+function getSavedDonationAmount(url, callback) {
   // See https://developer.chrome.com/apps/storage#type-StorageArea. We check
   // for chrome.runtime.lastError to ensure correctness even when the API call
   // fails.
-  chrome.storage.sync.get(url, (items) => {
-    callback(chrome.runtime.lastError ? null : items[url]);
+  chrome.storage.sync.get('quantity', (items) => {
+    callback(chrome.runtime.lastError ? null : items['quantity']);
   });
 }
 
@@ -86,9 +88,9 @@ function getSavedBackgroundColor(url, callback) {
  * @param {string} url URL for which background color is to be saved.
  * @param {string} color The background color to be saved.
  */
-function saveBackgroundColor(url, color) {
+function saveDonationAmount(url, quantity) {
   var items = {};
-  items[url] = color;
+  items['quantity'] = quantity;
   // See https://developer.chrome.com/apps/storage#type-StorageArea. We omit the
   // optional callback since we don't need to perform any action once the
   // background color is saved.
@@ -107,22 +109,20 @@ document.addEventListener('DOMContentLoaded', () => {
   getCurrentTabUrl((url) => {
     var dropdown = document.getElementById('dropdown');
 
-    alert("I am an alert box!");
-
     // Load the saved background color for this page and modify the dropdown
     // value, if needed.
-    getSavedBackgroundColor(url, (savedColor) => {
-      if (savedColor) {
-        changeBackgroundColor(savedColor);
-        dropdown.value = savedColor;
+    getSavedDonationAmount(url, (savedQuantity) => {
+      if (savedQuantity) {
+        changeDonationAmount(savedQuantity);
+        dropdown.value = savedQuantity;
       }
     });
 
     // Ensure the background color is changed and saved when the dropdown
     // selection changes.
     dropdown.addEventListener('change', () => {
-      changeBackgroundColor(dropdown.value);
-      saveBackgroundColor(url, dropdown.value);
+      changeDonationAmount(dropdown.value);
+      saveDonationAmount(url, dropdown.value);
     });
   });
 });
