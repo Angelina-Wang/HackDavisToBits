@@ -53,7 +53,10 @@ function check_current_url() {
     if (check_name(url) && check_name(old_url) != check_name(url)) {
       chrome.storage.sync.get('quantity', (items) => {
         var quantity = items['quantity']
-        var message = 'You just donated ' + quantity + ' cents to WOo charity. Now get back to work.'
+        var message = 'You just donated ' + quantity + ' cents to WOo charity. Now get back to work.';
+        if (!quantity) {
+          message = 'Please set a desired donation amount by clicking on the extension.'
+        }
         alert(message)
         donate(quantity);
       });
