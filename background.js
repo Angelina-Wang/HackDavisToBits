@@ -43,12 +43,31 @@ function check_current_url() {
     var url = tab.url;
 
     if (check_name(url) && check_name(old_url) != check_name(url)) {
-      alert("GET OFF");
+      chrome.storage.sync.get('quantity', (items) => {
+        var quantity = items['quantity']
+        var message = 'You just donated ' + quantity + ' cents to WOo charity. Now get back to work.'
+        alert(message)
+        donate(quantity);
+      });
     }
     old_url = url;
   });
 }
 
 function check_name(url) {
-  return url.includes('facebook');
+  if (url.includes('facebook')) {
+    return 'facebook';
+  }
+  if (url.includes('twitter')) {
+    return 'twitter';
+  }
+  if (url.includes('instagram')) {
+    return 'instagram';
+  }
+  return '';
+}
+
+function donate(quantity) {
+  console.log("Donating")
+  // Fill in donation payment
 }
