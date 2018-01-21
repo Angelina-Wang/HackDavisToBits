@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener(function() {
     // With a new rule ...
     chrome.declarativeContent.onPageChanged.addRules([
       {
-        alert("WHOAAA")
+        
         // That fires when a page's URL contains a 'g' ...
         conditions: [
           new chrome.declarativeContent.PageStateMatcher({
@@ -22,3 +22,36 @@ chrome.runtime.onInstalled.addListener(function() {
     ]);
   });
 });
+
+var old_url = "";
+
+
+chrome.tabs.onActivated.addListener(function() {
+  check_current_url();
+});
+
+chrome.tabs.onUpdated.addListener(function() {
+  check_current_url();
+});
+
+function check_current_url() {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, function(tabs) {
+    var tab = tabs[0];
+    var url = tab.url;
+    console.log(url);
+    console.log("old: ");
+    console.log(old_url)
+
+    if (check_name(url) && check_name(old_url) != check_name(url)) {
+      alert("GET OFF");
+    }
+    old_url = url;
+  });
+}
+
+function check_name(url) {
+  return url.includes('facebook');
+}
