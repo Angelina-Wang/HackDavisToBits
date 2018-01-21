@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var dropdown_charity = document.getElementById('charity');
     var toggle = document.getElementById('toggle');
     var website = document.getElementById('website');
-    var website_submit = document.getElementById('submit');
+    var website_submit = document.getElementById('submit_website');
 
     // Load the saved quantity and modify the dropdown
     // value, if needed.
@@ -201,9 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggle.addEventListener('change', () => {
       var result = toggle.checked ? 'on' : 'off';
-      if (result == 'off') {
-        chrome.storage.sync.clear();
-      }
       saveToggle(result);
     });
 

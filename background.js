@@ -25,7 +25,6 @@
 
 var old_url = "";
 var banned_websites = ['facebook.com', 'twitter.com', 'instagram.com'];
-var last_time = new Date().getTime();
 
 chrome.tabs.onActivated.addListener(function() {
   check_current_url();
@@ -42,6 +41,21 @@ chrome.windows.onFocusChanged.addListener(function(window) {
 chrome.windows.onCreated.addListener(function(window) {
     check_current_url();
 });
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+        for (key in changes) {
+          var storageChange = changes[key];
+          if (key == 'toggle' && storageChange.newValue == 'off') {
+            chrome.storage.sync.get(['donation_amount', 'charity'], (items) => {
+              if (items['donation_amount']) {
+                var message = 'You owe ' + items['charity'] + ' ' + items['donation_amount'] + ' cents. Happy studying.';
+                alert(message);
+                chrome.storage.sync.clear();
+              }
+            });
+          }
+        }
+      });
 
 function check_current_url() {
   chrome.storage.sync.get(['toggle', 'quantity', 'charity', 'banned'], (items) => {
@@ -80,7 +94,6 @@ function check_current_url() {
       });
     }
   });
-  
 }
 
 function check_name(url) {
@@ -93,6 +106,15 @@ function check_name(url) {
 }
 
 function donate(quantity) {
-  console.log("Donating")
+  chrome.storage.sync.get(['donation_amount', 'quantity'], (items) => {
+    var amount = 0;
+    if (items['donation_amount']) {
+      amount = Number(items['donation_amount']);
+    }
+    amount = amount + Number(items['quantity']);
+    items['donation_amount'] = amount;
+    chrome.storage.sync.set(items);
+    console.log(amount);
+  });
   // Fill in donation payment
 }
